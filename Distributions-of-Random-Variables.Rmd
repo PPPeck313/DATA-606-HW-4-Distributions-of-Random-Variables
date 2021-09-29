@@ -1,0 +1,214 @@
+---
+title: "Distributions-of-Random-Variables"
+author: "Preston Peck"
+date: "9/29/2021"
+output: html_document
+---
+
+```{r message=FALSE}
+library(tidyverse)
+library(openintro)
+library(DATA606)
+library(psych)
+```
+
+# Area under the curve
+
+```{r}
+maxLimit <- 3
+minLimit <- -3
+```
+
+### (a) Z < -1.35
+
+```{r}
+rightLimit <- -1.35
+pnorm(rightLimit, mean = 0, sd = 1)
+
+normal_plot(cv = c(minLimit, rightLimit))
+```
+
+### (b) Z > 1.48
+
+```{r}
+leftLimit <- 1.48
+1 - pnorm(leftLimit, mean = 0, sd = 1)
+
+normal_plot(cv = c(leftLimit, maxLimit))
+```
+
+### (c) -0.4 < Z < 1.5
+
+```{r}
+leftLimit <- -0.4
+rightLimit <- 1.5
+
+leftOf1.5 <- pnorm(rightLimit, mean = 0, sd = 1)
+leftOfNeg0.4 <- pnorm(leftLimit, mean = 0, sd = 1)
+leftOf1.5 - leftOfNeg0.4
+
+normal_plot(cv = c(leftLimit, rightLimit))
+```
+
+### (d) |Z| > 2
+
+```{r}
+leftLimit <- 2
+rightLimit <- -2
+
+rightOf2 <- 1 - pnorm(2, mean = 0, sd = 1)
+leftOfNeg2 <- pnorm(-2, mean = 0, sd = 1)
+leftOfNeg2 + rightOf2
+
+normal_plot(cv = c(leftLimit, rightLimit), tails = "two.sided")
+```
+
+# Triathlon times
+### (a) Write down the short-hand for these two normal distributions
+
+N(μ = 0, σ = 1)\
+Men_Ages_30-34(μ = 4313, σ = 583)\
+Women_Ages_25-29(μ = 5261, σ = 807)\
+
+### (b) What are the Z-scores for Leo’s and Mary’s finishing times? What do these Z-scores tell you?
+
+Z = (observation - mean) / SD
+
+```{r}
+leoZScore <- (4948 - 4313) / 583
+leoZScore
+
+maryZScore <- (5513 - 5261) / 807
+maryZScore
+```
+
+### (c) Did Leo or Mary rank better in their respective groups? Explain your reasoning.
+
+Mary ranked better in her respective group since she has a lower z-score. Even though Leo and Mary are both lower than their groups' average, Mary is closer to the average of her group than Leo is to his.
+
+### (d) What percent of the triathletes did Leo finish faster than in his group?
+
+Leo was faster than 13.8% of his group.
+
+```{r}
+1 - pnorm(4948, mean = 4313, sd = 583)
+```
+
+### (e) What percent of the triathletes did Mary finish faster than in her group?
+
+Mary was faster than 31.2% of her group. 
+
+```{r}
+1 - pnorm(5513, mean = 5261, sd = 807)
+```
+
+### (f) If the distributions of finishing times are not nearly normal, would your answers to parts (b) - (e) change? Explain your reasoning.
+
+If average wasn't affected by a new distribution, then Z-score would remain the same, but performance relative to the other participants would change depending on their distribution to the left and right of Leo or Mary's placement.
+
+# Heights of female college students
+### (a) The mean height is 61.52 inches with a standard deviation of 4.58 inches. Use this information to determine if the heights approximately follow the 68-95-99.7% Rule.
+
+```{r}
+data <- c(54, 55, 56, 56, 57, 58, 58, 59, 60, 60, 60, 61, 61, 62, 62, 63, 63, 63, 64, 65, 65, 67, 67, 69, 73)
+describe(data)
+quantile(data)
+
+sd = 4.58
+mean = 61.52
+
+leftOfNeg1Sd <- pnorm(mean - sd, mean = mean, sd = sd)
+leftOf1Sd <- 1 - pnorm(mean - sd, mean = mean, sd = sd)
+leftOf1Sd - leftOfNeg1Sd
+
+leftOfNeg2Sd <- pnorm(mean - sd * 2, mean = mean, sd = sd)
+leftOf2Sd <- 1 - pnorm(mean - sd * 2, mean = mean, sd = sd)
+leftOf2Sd - leftOfNeg2Sd
+
+leftOfNeg3Sd <- pnorm(mean - sd * 3, mean = mean, sd = sd)
+leftOf3Sd <- 1 - pnorm(mean - sd * 3, mean = mean, sd = sd)
+leftOf3Sd - leftOfNeg3Sd
+```
+
+### (b) Do these data appear to follow a normal distribution? Explain your reasoning using the graphs provided below.
+
+Not only when calculated does the dataset follow the 68-95-99.7% Rule, but the curve follows a standard bell shape and the points are consistently on or near enough to the trendline, so we can safely say it's a normal distribution
+
+# Defective rate
+### (a) What is the probability that the 10th transistor produced is the first with a defect?
+
+```{r}
+.98^9 *.02
+```
+
+### (b) What is the probability that the machine produces no defective transistors in a batch of 100?
+
+```{r}
+.98^100
+```
+
+### (c) On average, how many transistors would you expect to be produced before the first with a defect? What is the standard deviation?
+
+```{r}
+mean <- 1/.02
+sd <- sqrt(.98/.02^2)
+
+mean
+sd
+```
+
+### (d) Another machine that also produces transistors has a 5% defective rate where each transistor is produced independent of the others. On average how many transistors would you expect to be produced with this machine before the first with a defect? What is the standard deviation?
+
+```{r}
+mean <- 1/.05
+sd <- sqrt(.95/.05^2)
+
+mean
+sd
+```
+
+### (e) Based on your answers to parts (c) and (d), how does increasing the probability of an event affect the mean and standard deviation of the wait time until success?
+
+Increasing the probability of an event will lower the mean and standard deviation of the wait time
+
+# Male children
+### (a) Use the binomial model to calculate the probability that two of them will be boys.
+
+```{r}
+boyPercent <-.51
+girlPercent <- 1 - boyPercent
+
+dbinom(2, 3, boyPercent)
+```
+
+### (b) Write out all possible orderings of 3 children, 2 of whom are boys. Use these scenarios to calculate the same probability from part (a) but using the addition rule for disjoint outcomes. Confirm that your answers from parts (a) and (b) match.
+
+```{r}
+boyBoyGirl <- boyPercent * boyPercent * girlPercent
+boyGirlBoy <- boyPercent * girlPercent * boyPercent
+girlBoyBoy <- girlPercent * boyPercent * boyPercent
+boyBoyGirl + boyGirlBoy + girlBoyBoy
+```
+
+### (c) If we wanted to calculate the probability that a couple who plans to have 8 kids will have 3 boys, briefly describe why the approach from part (b) would be more tedious than the approach from part (a).
+
+You would have to explicitly write out and calculate all 56 combinations vs plugging the values into a formula
+
+```{r}
+choose(8, 3)
+```
+
+# Serving in volleyball
+### (a) What is the probability that on the 10th try she will make her 3rd successful serve?
+
+```{r}
+dbinom(2, 9, .15) * .15
+```
+
+### (b) Suppose she has made two successful serves in nine attempts. What is the probability that her 10th serve will be successful?
+
+15%
+
+### (c) Even though parts (a) and (b) discuss the same scenario, the probabilities you calculated should be different. Can you explain the reason for this discrepancy?
+
+Since the events are independent of one another and we're only looking at one event, the percent would be the same as any other shot at 15%
